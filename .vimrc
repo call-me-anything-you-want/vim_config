@@ -133,8 +133,6 @@ Plug 'itchyny/lightline.vim'
 
 " auto completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" CocInstall coc-pairs
-" CocInstall coc-pyright
 " add `"suggest.noselect": true` to CocConfig
 " to enable conda environment, one need to do the following work:
 " 1. create a file:
@@ -223,6 +221,11 @@ let g:mkdp_auto_start = 1
 
 " coc.nvim setup
 nmap <silent> gd <Plug>(coc-definition)
+" the following extensions will be automatically installed
+let g:coc_global_extensions = [
+      \ 'coc-pairs', 
+      \ 'coc-pyright',
+      \ ]
 
 " defx.nvim setup
 call defx#custom#option('_', {
@@ -298,7 +301,7 @@ function! s:defx_my_settings() abort
   nnoremap <silent><buffer><expr> cd
   \ defx#do_action('change_vim_cwd')
 endfunction
-" update defx automtically when changing file
+" update defx automatically when changing file
 autocmd BufWritePost * call defx#redraw()
 " open file by double click
 nnoremap <silent><buffer><expr> <2-LeftMouse> defx#do_action('open')
