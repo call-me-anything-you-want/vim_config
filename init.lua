@@ -1,3 +1,15 @@
+-- some requirements that needs to be installed manually as listed bellow:
+-- * any c compiler (if missing in linux, can be installed with `sudo apt install build-essential`)
+-- * npm (if missing in linux, can be installed with `sudo apt install npm`)
+-- * nodejs (if missing in linux, can be installed with `sudo apt install nodejs`)
+-- * xclip (if missing in linux, can be installed with `sudo apt install xclip`)
+-- * lua 5.1 (if missing in linux, can be installed with `sudo apt install lua5.1`)
+-- * luarocks (if missing in linux, can be installed with `sudo apt install luarocks`)
+-- * ripgrep (if missing in linux, can be installed with `sudo apt install ripgrep`)
+-- * neovim in npm (if missing in linux, can be installed with `sudo npm install -g neovim`)
+-- * fd-find (if missing in linux, can be installed with `sudo apt install fd-find`)
+
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -125,28 +137,32 @@ require("lazy").setup({
 
                 require('mason').setup()
                 local mason_lspconfig = require 'mason-lspconfig'
-                mason_lspconfig.setup {
-                    ensure_installed = { "pyright" }
-                }
                 local lspconfig = require("lspconfig")
-                lspconfig.pyright.setup {
-                    capabilities = capabilities,
-                }
 
                 local function set_up_go_to_definition_keymap(client, bufnr)
                     local opts = { noremap = true, silent = true }
                     vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
                     vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
                 end
-                mason_lspconfig.setup_handlers {
-                    function (server_name)
-                        local opts = {
-                            on_attach = set_up_go_to_definition_keymap,
-                            capabilities = capabilities,
-                        }
-                        lspconfig[server_name].setup(opts)
-                    end
+
+                mason_lspconfig.setup {
+                    ensure_installed = {
+                        "pyright",
+                    },
+                    handlers = {
+                        function (server_name)
+                            local opts = {
+                                on_attach = set_up_go_to_definition_keymap,
+                                capabilities = capabilities,
+                            }
+                            lspconfig[server_name].setup(opts)
+                        end
+                    }
                 }
+                lspconfig.pyright.setup {
+                    capabilities = capabilities,
+                }
+
             end
         },
         {
@@ -248,7 +264,11 @@ require("lazy").setup({
             end,
             config = function()
                 require("nvim-treesitter.configs").setup({
-                    ensure_installed = { "python", "vimdoc" },
+                    ensure_installed = {
+                        "python",
+                        "vimdoc",
+                        "lua"
+                    },
                     auto_install = true,
                     highlight = {
                         enable = true,
